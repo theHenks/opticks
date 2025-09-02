@@ -13,18 +13,20 @@ using Random
 using StaticArrays
 
 # Export main types and functions
-export SPhoton, QSim, QCerenkov, QScint, QPMT
-export simulate_photons, cerenkov_generation, scintillation_generation
-export optical_propagate, boundary_physics
+export SPhoton, QOptical, QCerenkov, QScint, QPMT
+export OpticalEvent, SimulationContext, CerenkovGenstep, ScintillationGenstep
+export MaterialProperties, SurfaceProperties, BoundaryProperties, PMTProperties, ScintillationProperties
+export simulate_optical_photons, run_simulation, simulate_event!
+export generate_cerenkov_photons!, generate_scintillation_photons!, propagate_photons!
 
 # Include core modules
 include("types.jl")
 include("photon.jl") 
-include("simulation.jl")
+include("random.jl")
 include("cerenkov.jl")
 include("scintillation.jl")
 include("optics.jl")
 include("pmt.jl")
-include("random.jl")
+include("simulation.jl")
 
 end # module

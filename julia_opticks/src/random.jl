@@ -7,9 +7,6 @@ Julia equivalent of qrng.h with CUDA random number generation.
 using CUDA
 using Random
 
-# Julia equivalent of curandState using CUDA.jl's RNG
-const CUDARandomState = CUDA.RNG.Random123.PhiloxState
-
 """
     OpticalRNG
 
@@ -17,23 +14,20 @@ Random number generator state for optical photon simulation.
 Manages CUDA random number generation with proper seeding and skip-ahead.
 """
 mutable struct OpticalRNG
-    state::CUDARandomState
+    seed::UInt64
     photon_idx::UInt32
     event_idx::UInt32
     skipahead_offset::UInt32
+    counter::UInt32
     
     function OpticalRNG(photon_idx::UInt32 = 0x00000000, event_idx::UInt32 = 0x00000000)
         # Default skipahead offset to prevent correlation between events
         skipahead_offset = parse(UInt32, get(ENV, "OPTICKS_EVENT_SKIPAHEAD", "10000"))
         
-        # Initialize with Philox4x32 generator (similar to curand)
-        seed = UInt64(42)  # Simulation seed constant
-        subsequence = UInt64(photon_idx)
-        offset = UInt64(skipahead_offset * event_idx)
+        # Initialize with simulation seed
+        seed = UInt64(42 + photon_idx + skipahead_offset * event_idx)
         
-        state = CUDA.RNG.Random123.PhiloxState(seed, subsequence, offset)
-        
-        new(state, photon_idx, event_idx, skipahead_offset)
+        new(seed, photon_idx, event_idx, skipahead_offset, 0x00000000)
     end
 end
 
@@ -43,7 +37,13 @@ end
 Generate uniform random float in [0,1).
 """
 function uniform(rng::OpticalRNG)::Float32
-    return Float32(CUDA.rand(rng.state))
+    # Simple LCG-based RNG for device compatibility
+    rng.counter += 1
+    x = rng.seed + rng.counter
+    x = x ⊻ (x >> 12)
+    x = x ⊻ (x << 25)
+    x = x ⊻ (x >> 27)
+    return Float32((x * 0x2545F4914F6CDD1D) >> 32) / Float32(2^32)
 end
 
 """
