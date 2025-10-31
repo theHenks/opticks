@@ -46,6 +46,15 @@ mutable struct SPhoton
             0x00000000, 0x00000000, 0x00000000, 0x00000000  # boundary_flag, identity, orient_idx, flagmask
         )
     end
+    
+    function SPhoton(pos::SVector{3,Float32}, time::Float32,
+                    mom::SVector{3,Float32}, iindex::UInt32,
+                    pol::SVector{3,Float32}, wavelength::Float32,
+                    boundary_flag::UInt32, identity::UInt32,
+                    orient_idx::UInt32, flagmask::UInt32)
+        new(pos, time, mom, iindex, pol, wavelength,
+            boundary_flag, identity, orient_idx, flagmask)
+    end
 end
 
 # Accessor methods for packed fields
@@ -96,24 +105,6 @@ struct OpticalProperties
     scattering::Vector{Float32}  # Scattering length vs wavelength
     reemission::Vector{Float32}  # Re-emission probability vs wavelength
     wavelengths::Vector{Float32} # Wavelength grid
-end
-
-# Boundary properties between materials
-"""
-    BoundaryProperties
-    
-Properties at interface between two optical materials including
-transmission, reflection, surface properties.
-"""
-struct BoundaryProperties
-    material1::Int32
-    material2::Int32
-    surface1::Int32
-    surface2::Int32
-    transmittance::Vector{Float32}
-    reflectance::Vector{Float32}
-    efficiency::Vector{Float32}
-    wavelengths::Vector{Float32}
 end
 
 # Event structure to hold generated photons and results

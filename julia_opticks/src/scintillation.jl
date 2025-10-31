@@ -45,6 +45,16 @@ struct ScintillationGenstep
             0, 0.0f0, 1.0f0,
             1.0f0, 1.0f0)
     end
+    
+    function ScintillationGenstep(gentype::UInt32, trackid::UInt32, matline::UInt32, numphoton::UInt32,
+                                 pos::SVector{3,Float32}, time::Float32,
+                                 delta_position::SVector{3,Float32}, step_length::Float32,
+                                 code::Int32, charge::Float32, weight::Float32,
+                                 scintillation_time::Float32, yield_ratio::Float32)
+        new(gentype, trackid, matline, numphoton,
+            pos, time, delta_position, step_length,
+            code, charge, weight, scintillation_time, yield_ratio)
+    end
 end
 
 """
