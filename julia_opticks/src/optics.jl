@@ -24,10 +24,10 @@ struct MaterialProperties
     function MaterialProperties(name::String, wavelengths::Vector{Float32})
         n_wl = length(wavelengths)
         new(name, 
-            ones(Float32, n_wl),      # Default n=1 (vacuum)
-            fill(1e6f0, n_wl),        # Default very long absorption
-            fill(1e6f0, n_wl),        # Default very long scattering  
-            zeros(Float32, n_wl),     # Default no re-emission
+            ones(Float32, n_wl),          # Default n=1 (vacuum)
+            fill(Float32(1e6), n_wl),     # Default very long absorption
+            fill(Float32(1e6), n_wl),     # Default very long scattering  
+            zeros(Float32, n_wl),         # Default no re-emission
             wavelengths)
     end
 end
@@ -75,8 +75,13 @@ struct BoundaryProperties
     surface1_idx::Int32              # Index into surface array (-1 if none)
     surface2_idx::Int32
     
-    function BoundaryProperties(mat1::Int32, mat2::Int32, surf1::Int32 = -1, surf2::Int32 = -1)
+    function BoundaryProperties(mat1::Int32, mat2::Int32, surf1::Int32 = Int32(-1), surf2::Int32 = Int32(-1))
         new(mat1, mat2, surf1, surf2)
+    end
+    
+    # Convenience constructors that convert Int64 to Int32
+    function BoundaryProperties(mat1::Integer, mat2::Integer, surf1::Integer = -1, surf2::Integer = -1)
+        new(Int32(mat1), Int32(mat2), Int32(surf1), Int32(surf2))
     end
 end
 

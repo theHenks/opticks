@@ -45,6 +45,11 @@ struct PMTProperties
             50.0f0, 3.0f0,                 # Default geometry
             100.0f0, 0.01f0)               # Default noise parameters
     end
+    
+    # Convenience constructor that converts Integer to Int32
+    function PMTProperties(name::String, pmt_type::Integer, wavelengths::Vector{Float32})
+        PMTProperties(name, Int32(pmt_type), wavelengths)
+    end
 end
 
 """
